@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'HomePage.dart';
+
 class GetStartPage extends StatefulWidget {
   const GetStartPage({super.key});
 
@@ -223,7 +225,28 @@ class _GetStartPageState extends State<GetStartPage>
                   text: 'සිංහල',
                   controller: _buttonController1,
                   onTap: () {
-                    // Add your navigation or language selection logic here
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        transitionDuration: Duration(
+                          milliseconds: 500,
+                        ), // Animation speed
+                        pageBuilder:
+                            (context, animation, secondaryAnimation) =>
+                                HomePage(),
+                        transitionsBuilder: (
+                          context,
+                          animation,
+                          secondaryAnimation,
+                          child,
+                        ) {
+                          return FadeTransition(
+                            // Use fade effect
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
                   },
                 ),
               ),

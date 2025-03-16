@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'homePageContainer01.dart';
+import 'homePageContainer02.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             const Padding(
               padding: EdgeInsets.fromLTRB(10, 70, 10, 20),
+              //main text of home page
               child: Text(
                 'සුභ අළුත් අවුරුද්දක් වේවා',
                 style: TextStyle(
@@ -34,6 +36,18 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: HomePageContainer01(),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                height: 300,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xffffffff),
+                ),
+              ),
             ),
           ],
         ),

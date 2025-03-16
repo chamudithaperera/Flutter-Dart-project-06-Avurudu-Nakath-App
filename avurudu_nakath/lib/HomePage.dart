@@ -13,21 +13,53 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xffFFBE45),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            SizedBox(
-              width: 250,
-              height: 250,
-              child: Image.asset('assets/sun.png', fit: BoxFit.cover),
+            Positioned(
+              top: 90,
+              child: SizedBox(
+                width: 230,
+                height: 230,
+                child: Image.asset('assets/sun.png', fit: BoxFit.cover),
+              ),
             ),
-            const Text(
-              'අපේ',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontFamily: 'UNDisapamok',
+            Positioned(
+              top: 330,
+              left: 120,
+              child: const Text(
+                'අපේ',
+                style: TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  fontFamily: 'UNDisapamok',
+                ),
+              ),
+            ),
+            Positioned(
+              top: 355,
+              left: 185,
+              child: const Text(
+                'අවුරුදු',
+                style: TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  fontFamily: 'UNDisapamok',
+                ),
+              ),
+            ),
+            Positioned(
+              top: 350,
+              child: const Text(
+                'නැකැත්',
+                style: TextStyle(
+                  fontSize: 160,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  fontFamily: 'UNDisapamok',
+                ),
               ),
             ),
           ],

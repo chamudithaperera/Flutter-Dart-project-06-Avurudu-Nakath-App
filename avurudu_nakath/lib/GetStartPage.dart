@@ -201,10 +201,24 @@ class _GetStartPageState extends State<GetStartPage>
                     fontFamily: 'UNDisapamok',
                   ),
                 ),
-              ), //main text set end
+              ),
+              const Positioned(
+                top: 548,
+                child: Text(
+                  'புத்தாண்டு   வாழ்த்துக்கள்',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black,
+                    fontFamily: 'UNDisapamok',
+                    letterSpacing: 1.3,
+                  ),
+                ),
+              ),
+              //main text set end
               // Improved button with animations
               Positioned(
-                top: 600,
+                top: 630,
                 child: AnimatedLanguageButton(
                   text: 'සිංහල',
                   controller: _buttonController1,
@@ -215,7 +229,7 @@ class _GetStartPageState extends State<GetStartPage>
               ),
 
               Positioned(
-                top: 664,
+                top: 694,
                 child: AnimatedLanguageButton(
                   text: 'தமிழ்',
                   controller: _buttonController2,

@@ -17,16 +17,17 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             SizedBox(
-              width: 300,
-              height: 300,
+              width: 250,
+              height: 250,
               child: Image.asset('assets/sun.png', fit: BoxFit.cover),
             ),
             const Text(
-              'Avurudu',
+              'අපේ',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
+                fontFamily: 'UNDisapamok',
               ),
             ),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -7,7 +8,54 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  // Animation controller for the sun
+  late final AnimationController _sunController = AnimationController(
+    duration: const Duration(seconds: 60),
+    vsync: this,
+  );
+
+  late final Animation<double> _sunRotation;
+
+  // For button animations
+  final ButtonAnimationController _buttonController1 =
+      ButtonAnimationController();
+  final ButtonAnimationController _buttonController2 =
+      ButtonAnimationController();
+
+  // For decorative elements animation
+  bool _showDecorations = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start the sun animation
+    _sunController.repeat();
+
+    // Create sun rotation animation
+    _sunRotation = Tween<double>(
+      begin: 0,
+      end: 2 * math.pi,
+    ).animate(_sunController);
+
+    // Show decorative elements after a delay
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _showDecorations = true;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _sunController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,20 +64,90 @@ class _HomePageState extends State<HomePage> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Positioned(
-              top: 90,
-              child: SizedBox(
-                width: 230,
-                height: 230,
-                child: Image.asset('assets/sun.png', fit: BoxFit.cover),
+            // Decorative background gradient
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.topCenter,
+                  radius: 1.0,
+                  colors: [Color(0xffFFD485), Color(0xffFFBE45)],
+                ),
               ),
             ),
 
-            //main text set start
+            // Animated decorative elements
             Positioned(
+              bottom: 20,
+              right: 20,
+              child: AnimatedOpacity(
+                opacity: _showDecorations ? 1.0 : 0.0,
+                duration: const Duration(seconds: 1),
+                curve: Curves.easeIn,
+                child: AnimatedContainer(
+                  duration: const Duration(seconds: 1),
+                  width: 100,
+                  height: 100,
+                  margin: EdgeInsets.only(top: _showDecorations ? 0 : 20),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(
+              bottom: 50,
+              left: 30,
+              child: AnimatedOpacity(
+                opacity: _showDecorations ? 1.0 : 0.0,
+                duration: const Duration(seconds: 1),
+                curve: Curves.easeIn,
+                child: AnimatedContainer(
+                  duration: const Duration(seconds: 1),
+                  width: 70,
+                  height: 70,
+                  margin: EdgeInsets.only(top: _showDecorations ? 0 : 20),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                  ),
+                ),
+              ),
+            ),
+
+            // Animated sun
+            Positioned(
+              top: 90,
+              child: AnimatedBuilder(
+                animation: _sunController,
+                builder: (context, child) {
+                  // Calculate oscillating scale value for "breathing" effect
+                  double breatheScale =
+                      1.0 + 0.05 * math.sin(_sunController.value * math.pi * 2);
+
+                  return Transform.rotate(
+                    angle: _sunRotation.value,
+                    child: Transform.scale(
+                      scale: breatheScale,
+                      child: SizedBox(
+                        width: 230,
+                        height: 230,
+                        child: Image.asset('assets/sun.png', fit: BoxFit.cover),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            //main text set start - preserved as requested
+            const Positioned(
               top: 330,
               left: 120,
-              child: const Text(
+              child: Text(
                 'අපේ',
                 style: TextStyle(
                   fontSize: 80,
@@ -39,10 +157,10 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Positioned(
+            const Positioned(
               top: 355,
               left: 185,
-              child: const Text(
+              child: Text(
                 'අවුරුදු',
                 style: TextStyle(
                   fontSize: 80,
@@ -52,9 +170,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Positioned(
+            const Positioned(
               top: 350,
-              child: const Text(
+              child: Text(
                 'නැකැත්',
                 style: TextStyle(
                   fontSize: 160,
@@ -64,43 +182,133 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ), //main text set end
-
+            // Improved button with animations
             Positioned(
               top: 600,
-              child: Container(
-                height: 50,
-                width: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    'සිංහල',
-                    style: TextStyle(color: Colors.black, fontSize: 25),
-                  ),
-                ),
+              child: AnimatedLanguageButton(
+                text: 'සිංහල',
+                controller: _buttonController1,
+                onTap: () {
+                  // Add your navigation or language selection logic here
+                },
               ),
             ),
 
             Positioned(
               top: 664,
-              child: Container(
-                height: 50,
-                width: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    'தமிழ்',
-                    style: TextStyle(color: Colors.black, fontSize: 25),
-                  ),
-                ),
+              child: AnimatedLanguageButton(
+                text: 'தமிழ்',
+                controller: _buttonController2,
+                onTap: () {
+                  // Add your navigation or language selection logic here
+                },
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// Custom button animation controller
+class ButtonAnimationController extends ChangeNotifier {
+  bool _isHovering = false;
+  bool _isPressed = false;
+
+  bool get isHovering => _isHovering;
+  bool get isPressed => _isPressed;
+
+  void setHovering(bool value) {
+    if (_isHovering != value) {
+      _isHovering = value;
+      notifyListeners();
+    }
+  }
+
+  void setPressed(bool value) {
+    if (_isPressed != value) {
+      _isPressed = value;
+      notifyListeners();
+    }
+  }
+}
+
+// Custom animated button widget
+class AnimatedLanguageButton extends StatefulWidget {
+  final String text;
+  final ButtonAnimationController controller;
+  final VoidCallback onTap;
+
+  const AnimatedLanguageButton({
+    super.key,
+    required this.text,
+    required this.controller,
+    required this.onTap,
+  });
+
+  @override
+  State<AnimatedLanguageButton> createState() => _AnimatedLanguageButtonState();
+}
+
+class _AnimatedLanguageButtonState extends State<AnimatedLanguageButton> {
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => widget.controller.setHovering(true),
+      onExit: (_) => widget.controller.setHovering(false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTapDown: (_) => widget.controller.setPressed(true),
+        onTapUp: (_) => widget.controller.setPressed(false),
+        onTapCancel: () => widget.controller.setPressed(false),
+        onTap: widget.onTap,
+        child: ListenableBuilder(
+          listenable: widget.controller,
+          builder: (context, _) {
+            final isHovering = widget.controller.isHovering;
+            final isPressed = widget.controller.isPressed;
+
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              height: 50,
+              width: 300,
+              margin: EdgeInsets.only(top: isPressed ? 2 : 0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                color:
+                    isPressed
+                        ? Colors.white.withOpacity(0.8)
+                        : isHovering
+                        ? Colors.white.withOpacity(0.95)
+                        : Colors.white,
+                boxShadow:
+                    isPressed
+                        ? []
+                        : isHovering
+                        ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ]
+                        : [],
+              ),
+              child: Center(
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 25,
+                    fontWeight:
+                        isHovering ? FontWeight.bold : FontWeight.normal,
+                  ),
+                  child: Text(widget.text),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

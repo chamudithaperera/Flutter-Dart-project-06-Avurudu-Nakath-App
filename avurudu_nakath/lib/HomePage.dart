@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
                 child: Image.asset('assets/sun.png', fit: BoxFit.cover),
               ),
             ),
+
+            //main text set start
             Positioned(
               top: 330,
               left: 120,
@@ -59,6 +61,42 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                   fontFamily: 'UNDisapamok',
+                ),
+              ),
+            ), //main text set end
+
+            Positioned(
+              top: 600,
+              child: Container(
+                height: 50,
+                width: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Text(
+                    'සිංහල',
+                    style: TextStyle(color: Colors.black, fontSize: 25),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(
+              top: 664,
+              child: Container(
+                height: 50,
+                width: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Text(
+                    'தமிழ்',
+                    style: TextStyle(color: Colors.black, fontSize: 25),
+                  ),
                 ),
               ),
             ),

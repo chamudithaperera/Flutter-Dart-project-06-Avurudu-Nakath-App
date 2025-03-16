@@ -1,4 +1,4 @@
-import 'package:avurudu_nakath/HomePage.dart';
+import 'package:avurudu_nakath/GetStartPage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,6 +10,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomePage());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: GetStartPage());
   }
 }

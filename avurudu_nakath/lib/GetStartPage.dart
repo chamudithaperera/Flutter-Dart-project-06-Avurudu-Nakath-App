@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class GetStartPage extends StatefulWidget {
+  const GetStartPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<GetStartPage> createState() => _GetStartPageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _GetStartPageState extends State<GetStartPage>
     with SingleTickerProviderStateMixin {
   // Animation controller for the sun
   late final AnimationController _sunController = AnimationController(

@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   // Animation controller for the sun
   late final AnimationController _sunController = AnimationController(
-    duration: const Duration(seconds: 60),
+    duration: const Duration(seconds: 10),
     vsync: this,
   );
 
@@ -27,6 +27,9 @@ class _HomePageState extends State<HomePage>
   // For decorative elements animation
   bool _showDecorations = false;
 
+  // For page fade-in effect
+  double _pageOpacity = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +42,15 @@ class _HomePageState extends State<HomePage>
       begin: 0,
       end: 2 * math.pi,
     ).animate(_sunController);
+
+    // Create page fade-in effect
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        setState(() {
+          _pageOpacity = 1.0;
+        });
+      }
+    });
 
     // Show decorative elements after a delay
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -60,151 +72,160 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffFFBE45),
-      body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Decorative background gradient
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.topCenter,
-                  radius: 1.0,
-                  colors: [Color(0xffFFD485), Color(0xffFFBE45)],
-                ),
-              ),
-            ),
-
-            // Animated decorative elements
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: AnimatedOpacity(
-                opacity: _showDecorations ? 1.0 : 0.0,
-                duration: const Duration(seconds: 1),
-                curve: Curves.easeIn,
-                child: AnimatedContainer(
-                  duration: const Duration(seconds: 1),
-                  width: 100,
-                  height: 100,
-                  margin: EdgeInsets.only(top: _showDecorations ? 0 : 20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1),
+      body: AnimatedOpacity(
+        opacity: _pageOpacity,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeIn,
+        child: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Decorative background gradient
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.topCenter,
+                    radius: 1.0,
+                    colors: [Color(0xffFFD485), Color(0xffFFBE45)],
                   ),
                 ),
               ),
-            ),
 
-            Positioned(
-              bottom: 50,
-              left: 30,
-              child: AnimatedOpacity(
-                opacity: _showDecorations ? 1.0 : 0.0,
-                duration: const Duration(seconds: 1),
-                curve: Curves.easeIn,
-                child: AnimatedContainer(
+              // Animated decorative elements
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: AnimatedOpacity(
+                  opacity: _showDecorations ? 1.0 : 0.0,
                   duration: const Duration(seconds: 1),
-                  width: 70,
-                  height: 70,
-                  margin: EdgeInsets.only(top: _showDecorations ? 0 : 20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1),
-                  ),
-                ),
-              ),
-            ),
-
-            // Animated sun
-            Positioned(
-              top: 90,
-              child: AnimatedBuilder(
-                animation: _sunController,
-                builder: (context, child) {
-                  // Calculate oscillating scale value for "breathing" effect
-                  double breatheScale =
-                      1.0 + 0.05 * math.sin(_sunController.value * math.pi * 2);
-
-                  return Transform.rotate(
-                    angle: _sunRotation.value,
-                    child: Transform.scale(
-                      scale: breatheScale,
-                      child: SizedBox(
-                        width: 230,
-                        height: 230,
-                        child: Image.asset('assets/sun.png', fit: BoxFit.cover),
-                      ),
+                  curve: Curves.easeIn,
+                  child: AnimatedContainer(
+                    duration: const Duration(seconds: 1),
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(top: _showDecorations ? 0 : 20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
 
-            //main text set start - preserved as requested
-            const Positioned(
-              top: 330,
-              left: 120,
-              child: Text(
-                'අපේ',
-                style: TextStyle(
-                  fontSize: 80,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: 'UNDisapamok',
+              Positioned(
+                bottom: 50,
+                left: 30,
+                child: AnimatedOpacity(
+                  opacity: _showDecorations ? 1.0 : 0.0,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeIn,
+                  child: AnimatedContainer(
+                    duration: const Duration(seconds: 1),
+                    width: 70,
+                    height: 70,
+                    margin: EdgeInsets.only(top: _showDecorations ? 0 : 20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            const Positioned(
-              top: 355,
-              left: 185,
-              child: Text(
-                'අවුරුදු',
-                style: TextStyle(
-                  fontSize: 80,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: 'UNDisapamok',
-                ),
-              ),
-            ),
-            const Positioned(
-              top: 350,
-              child: Text(
-                'නැකැත්',
-                style: TextStyle(
-                  fontSize: 160,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: 'UNDisapamok',
-                ),
-              ),
-            ), //main text set end
-            // Improved button with animations
-            Positioned(
-              top: 600,
-              child: AnimatedLanguageButton(
-                text: 'සිංහල',
-                controller: _buttonController1,
-                onTap: () {
-                  // Add your navigation or language selection logic here
-                },
-              ),
-            ),
 
-            Positioned(
-              top: 664,
-              child: AnimatedLanguageButton(
-                text: 'தமிழ்',
-                controller: _buttonController2,
-                onTap: () {
-                  // Add your navigation or language selection logic here
-                },
+              // Animated sun
+              Positioned(
+                top: 90,
+                child: AnimatedBuilder(
+                  animation: _sunController,
+                  builder: (context, child) {
+                    // Calculate oscillating scale value for "breathing" effect
+                    double breatheScale =
+                        1.0 +
+                        0.05 * math.sin(_sunController.value * math.pi * 2);
+
+                    return Transform.rotate(
+                      angle: _sunRotation.value,
+                      child: Transform.scale(
+                        scale: breatheScale,
+                        child: SizedBox(
+                          width: 230,
+                          height: 230,
+                          child: Image.asset(
+                            'assets/sun.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+
+              //main text set start - preserved as requested
+              const Positioned(
+                top: 330,
+                left: 120,
+                child: Text(
+                  'අපේ',
+                  style: TextStyle(
+                    fontSize: 80,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                    fontFamily: 'UNDisapamok',
+                  ),
+                ),
+              ),
+              const Positioned(
+                top: 355,
+                left: 185,
+                child: Text(
+                  'අවුරුදු',
+                  style: TextStyle(
+                    fontSize: 80,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                    fontFamily: 'UNDisapamok',
+                  ),
+                ),
+              ),
+              const Positioned(
+                top: 350,
+                child: Text(
+                  'නැකැත්',
+                  style: TextStyle(
+                    fontSize: 160,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                    fontFamily: 'UNDisapamok',
+                  ),
+                ),
+              ), //main text set end
+              // Improved button with animations
+              Positioned(
+                top: 600,
+                child: AnimatedLanguageButton(
+                  text: 'සිංහල',
+                  controller: _buttonController1,
+                  onTap: () {
+                    // Add your navigation or language selection logic here
+                  },
+                ),
+              ),
+
+              Positioned(
+                top: 664,
+                child: AnimatedLanguageButton(
+                  text: 'தமிழ்',
+                  controller: _buttonController2,
+                  onTap: () {
+                    // Add your navigation or language selection logic here
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

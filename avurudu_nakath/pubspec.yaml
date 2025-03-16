@@ -23,6 +23,7 @@ flutter:
 
   assets:
     - assets/sun.png
+    - assets/sunFace.png
 
   fonts:
     - family: UNDisapamok

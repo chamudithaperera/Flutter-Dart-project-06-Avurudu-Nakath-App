@@ -165,6 +165,15 @@ class _GetStartPageState extends State<GetStartPage>
                 ),
               ),
 
+              Positioned(
+                top: 90,
+                child: SizedBox(
+                  width: 230,
+                  height: 230,
+                  child: Image.asset('assets/sunFace.png', fit: BoxFit.cover),
+                ),
+              ),
+
               //main text set start - preserved as requested
               const Positioned(
                 top: 330,

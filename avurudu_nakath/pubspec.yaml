@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  flutter_timer_countdown: ^1.0.7
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +30,6 @@ flutter:
     - family: UNDisapamok
       fonts:
         - asset: assets/fonts/UN-Disapamok.ttf
+    - family: UNIndeewaree
+      fonts:
+        - asset: assets/fonts/UN-Indeewaree.ttf

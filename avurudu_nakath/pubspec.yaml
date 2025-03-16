@@ -33,3 +33,9 @@ flutter:
     - family: UNIndeewaree
       fonts:
         - asset: assets/fonts/UN-Indeewaree.ttf
+    - family: UNArundathee
+      fonts:
+        - asset: assets/fonts/UN-Arundathee.ttf
+    - family: UNGurulugomi
+      fonts:
+        - asset: assets/fonts/UN-Gurulugomi.ttf

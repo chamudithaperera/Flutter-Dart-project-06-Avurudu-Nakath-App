@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -65,6 +64,114 @@ class _HomePageState extends State<HomePage> {
                               fontFamily: 'UNIndeewaree',
                             ),
                           ),
+                          SizedBox(width: 2),
+                          Container(
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: Color(0xffFFE3AE),
+                            ),
+
+                            child: Center(
+                              child: Text(
+                                '00',
+                                style: TextStyle(
+                                  fontFamily: 'UNArundathee',
+                                  fontSize: 25,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 6),
+
+                          Text(
+                            'පැය:',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontFamily: 'UNIndeewaree',
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                          Container(
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: Color(0xffFFE3AE),
+                            ),
+
+                            child: Center(
+                              child: Text(
+                                '02',
+                                style: TextStyle(
+                                  fontFamily: 'UNArundathee',
+                                  fontSize: 25,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 6),
+
+                          Text(
+                            'මිනි:',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontFamily: 'UNIndeewaree',
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                          Container(
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: Color(0xffFFE3AE),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '34',
+                                style: TextStyle(
+                                  fontFamily: 'UNArundathee',
+                                  fontSize: 25,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 6),
+
+                          Text(
+                            'තත්:',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontFamily: 'UNIndeewaree',
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                          Container(
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: Color(0xffFFE3AE),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '12',
+                                style: TextStyle(
+                                  fontFamily: 'UNArundathee',
+                                  fontSize: 25,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 6),
                         ],
                       ),
                     ],

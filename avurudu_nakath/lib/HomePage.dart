@@ -186,6 +186,8 @@ class _HomePageState extends State<HomePage> {
     // If the target date is in the past, stop countdown and check for next event
     if (difference.isNegative) {
       _updateNextEvent();
+      // Restart the countdown with the new next event
+      _restartCountdown();
       return;
     }
 
@@ -210,95 +212,135 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color(0xffFFBE45),
       body: Stack(
         children: [
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              SliverToBoxAdapter(child: SizedBox(height: _titleHeight)),
+          // Add a safe area to prevent scrolling under the top container
+          SafeArea(
+            child: CustomScrollView(
+              controller: _scrollController,
+              // Use clamping physics to prevent overscroll
+              physics: const ClampingScrollPhysics(),
+              slivers: [
+                // Add padding at the top to ensure content starts below the top container
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    // Adjust padding to create more space at the top
+                    top:
+                        _titleHeight +
+                        (_container02Height * _scrollProgress) +
+                        20,
+                  ),
+                  sliver: SliverToBoxAdapter(child: Container()),
+                ),
 
-              SliverToBoxAdapter(
-                child: Opacity(
-                  opacity: 1.0 - _scrollProgress,
-                  child: Transform.translate(
-                    offset: Offset(0, -50 * _scrollProgress),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: HomePageContainer01(
-                        days: days,
-                        hours: hours,
-                        minutes: minutes,
-                        seconds: seconds,
-                        eventId: nextEventId,
-                        onTap: () => _showPopup(context, nextEventId),
+                SliverToBoxAdapter(
+                  child: Opacity(
+                    opacity: 1.0 - _scrollProgress,
+                    child: Transform.translate(
+                      offset: Offset(0, -50 * _scrollProgress),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: HomePageContainer01(
+                          days: days,
+                          hours: hours,
+                          minutes: minutes,
+                          seconds: seconds,
+                          eventId: nextEventId,
+                          onTap: () => _showPopup(context, nextEventId),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Image.asset(
-                    'assets/lineArt.png',
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Center(
-                        child: Text(
-                          'Image Not Found',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      );
-                    },
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 28,
+                      horizontal: 24,
+                    ), // Adjust padding for better spacing
+                    child: Image.asset(
+                      'assets/lineArt.png',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child: Text(
+                            'Image Not Found',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
 
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color(0xffffffff),
-                    ),
-                    child: Column(
-                      children: List.generate(
-                        dataList.length,
-                        (index) => GestureDetector(
-                          onTap: () => _showPopup(context, dataList[index].id),
-                          child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color(0xffFFF1D6),
-                            ),
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  dataList[index].name,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                    fontFamily: 'UNIndeewaree',
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      24,
+                      0,
+                      24,
+                      32,
+                    ), // Adjust padding for bottom content
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          16,
+                        ), // Increase border radius
+                        color: const Color(0xffffffff),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: List.generate(
+                          dataList.length,
+                          (index) => GestureDetector(
+                            onTap:
+                                () => _showPopup(context, dataList[index].id),
+                            child: Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.all(12), // Adjust margin
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  14,
+                                ), // Increase border radius
+                                color: const Color(0xffFFF1D6),
+                              ),
+                              padding: const EdgeInsets.all(
+                                16.0,
+                              ), // Increase padding
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    dataList[index].name,
+                                    style: const TextStyle(
+                                      fontSize:
+                                          22, // Slightly increase font size
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                      fontFamily: 'UNIndeewaree',
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  dataList[index].description,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                    fontFamily: 'UNGanganee',
+                                  const SizedBox(
+                                    height: 10,
+                                  ), // Increase spacing
+                                  Text(
+                                    dataList[index].description,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                      fontFamily: 'UNGanganee',
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -306,8 +348,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                // Add extra space at the bottom for better scrolling experience
+                const SliverToBoxAdapter(child: SizedBox(height: 40)),
+              ],
+            ),
           ),
 
           Positioned(
@@ -339,7 +384,7 @@ class _HomePageState extends State<HomePage> {
             child: Opacity(
               opacity: _scrollProgress,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Transform.translate(
                   offset: Offset(0, (1.0 - _scrollProgress) * 30),
                   child: HomePageContainer02(

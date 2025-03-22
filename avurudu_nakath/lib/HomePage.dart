@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'data/data.dart';
 import 'homePageContainer01.dart';
@@ -14,7 +15,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
   double _scrollProgress = 0.0;
@@ -24,6 +26,10 @@ class _HomePageState extends State<HomePage> {
   final double _topPadding = 60.0;
   final double _scrollThreshold = 0;
   final double _maxTransitionOffset = 200.0;
+
+  // Animation controller for the sun - initialize directly instead of using late
+  AnimationController? _sunController;
+  Animation<double>? _sunRotation;
 
   // Timer for countdown
   Timer? _countdownTimer;
@@ -36,13 +42,28 @@ class _HomePageState extends State<HomePage> {
   String seconds = "00";
 
   // ID of the next event (will be determined dynamically)
-  late int nextEventId;
+  int nextEventId = 1; // Default value
   late DataModel nextEvent;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+
+    // Initialize sun animation controller
+    _sunController = AnimationController(
+      duration: const Duration(seconds: 20),
+      vsync: this,
+    );
+
+    // Create sun rotation animation
+    _sunRotation = Tween<double>(
+      begin: 0,
+      end: 2 * math.pi,
+    ).animate(_sunController!);
+
+    // Start the sun animation
+    _sunController!.repeat();
 
     // Find the next event
     _updateNextEvent();
@@ -69,6 +90,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _sunController?.dispose();
 
     // Cancel the timers when widget is disposed
     _countdownTimer?.cancel();
@@ -208,10 +230,87 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Check if controller is initialized
+    if (_sunController == null || !_sunController!.isAnimating) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
-      backgroundColor: const Color(0xffFFBE45),
       body: Stack(
         children: [
+          // Decorative background gradient (similar to GetStarted page)
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topCenter,
+                radius: 1.0,
+                colors: [Color(0xffFFD485), Color(0xffFFBE45)],
+              ),
+            ),
+          ),
+
+          // Animated sun in the background
+          Positioned(
+            top: -30,
+            right: -30,
+            child: AnimatedBuilder(
+              animation: _sunController!,
+              builder: (context, child) {
+                // Calculate oscillating scale value for "breathing" effect
+                double breatheScale =
+                    1.0 + 0.05 * math.sin(_sunController!.value * math.pi * 2);
+
+                return Opacity(
+                  opacity: 0.6,
+                  child: Transform.rotate(
+                    angle: _sunRotation!.value,
+                    child: Transform.scale(
+                      scale: breatheScale,
+                      child: SizedBox(
+                        width: 150,
+                        height: 150,
+                        child: Image.asset('assets/sun.png', fit: BoxFit.cover),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Decorative elements for Avurudu with subtle animation
+          Positioned(
+            bottom: 20 + (10 * math.sin(_sunController!.value * math.pi)),
+            right: 20,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(
+                  0.1 + 0.05 * math.sin(_sunController!.value * math.pi * 2),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            bottom: 50 + (8 * math.cos(_sunController!.value * math.pi)),
+            left: 30,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(
+                  0.1 + 0.05 * math.cos(_sunController!.value * math.pi * 2),
+                ),
+              ),
+            ),
+          ),
+
           // Add a safe area to prevent scrolling under the top container
           SafeArea(
             child: CustomScrollView(

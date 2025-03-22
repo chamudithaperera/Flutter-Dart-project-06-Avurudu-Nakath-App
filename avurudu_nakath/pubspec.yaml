@@ -30,6 +30,8 @@ flutter:
     - assets/sunFace.png
     - assets/lineArt.png
     - assets/cooking.png
+    - assets/nakath2.png
+    - assets/nakath3.png
 
   fonts:
     - family: UNDisapamok

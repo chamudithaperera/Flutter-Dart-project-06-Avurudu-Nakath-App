@@ -182,11 +182,14 @@ class _PopupDialogState extends State<PopupDialog> {
 
               // Center image with background container
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF9ED),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -196,17 +199,19 @@ class _PopupDialogState extends State<PopupDialog> {
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Image.asset(
-                      'assets/cooking.png',
-                      width: 200,
-                      height: 200,
+                      widget.data.photo, // Use photo from DataModel by ID
+                      width: 240,
+                      height: 240,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          width: 200,
-                          height: 200,
+                          width: 240,
+                          height: 240,
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFF1D6),
                             borderRadius: BorderRadius.circular(12),

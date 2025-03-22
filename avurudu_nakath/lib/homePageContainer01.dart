@@ -1,169 +1,143 @@
 import 'package:flutter/material.dart';
+import 'data/data.dart';
 
-class HomePageContainer01 extends StatefulWidget {
-  const HomePageContainer01({super.key});
+class HomePageContainer01 extends StatelessWidget {
+  final String days;
+  final String hours;
+  final String minutes;
+  final String seconds;
+  final int eventId;
+  final VoidCallback onTap;
 
-  @override
-  State<HomePageContainer01> createState() => _HomePageContainer01State();
-}
+  const HomePageContainer01({
+    super.key,
+    required this.days,
+    required this.hours,
+    required this.minutes,
+    required this.seconds,
+    required this.eventId,
+    required this.onTap,
+  });
 
-class _HomePageContainer01State extends State<HomePageContainer01> {
   @override
   Widget build(BuildContext context) {
+    // Find the event data from the dataList
+    final eventData = dataList.firstWhere((item) => item.id == eventId);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 270,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10, left: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'මීළඟ නැකත: ${eventData.name}',
+                style: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  fontFamily: 'UNIndeewaree',
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              Row(
+                children: [
+                  const Text(
+                    'දින:',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontFamily: 'UNIndeewaree',
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  _buildCountdownBox(days),
+                  const SizedBox(width: 6),
+
+                  const Text(
+                    'පැය:',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontFamily: 'UNIndeewaree',
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  _buildCountdownBox(hours),
+                  const SizedBox(width: 6),
+
+                  const Text(
+                    'මිනි:',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontFamily: 'UNIndeewaree',
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  _buildCountdownBox(minutes),
+                  const SizedBox(width: 6),
+
+                  const Text(
+                    'තත්:',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontFamily: 'UNIndeewaree',
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  _buildCountdownBox(seconds),
+                  const SizedBox(width: 6),
+                ],
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(top: 20, right: 20),
+                child: Text(
+                  eventData.description,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'UNGurulugomi',
+                  ),
+                  textAlign: TextAlign.justify,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Creates a styled container for displaying countdown numbers
+  Widget _buildCountdownBox(String value) {
     return Container(
-      height: 270,
-      width: double.infinity,
+      height: 44,
+      width: 44,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: Colors.white,
+        color: const Color(0xffFFE3AE),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'මීළඟ නැකත: ආහාර පිසීම',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-                fontFamily: 'UNIndeewaree',
-              ),
-            ),
-            SizedBox(height: 12),
-
-            Row(
-              children: [
-                Text(
-                  'දින:',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    fontFamily: 'UNIndeewaree',
-                  ),
-                ),
-                SizedBox(width: 2),
-                Container(
-                  height: 44,
-                  width: 44,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    color: Color(0xffFFE3AE),
-                  ),
-
-                  child: Center(
-                    child: Text(
-                      '00',
-                      style: TextStyle(
-                        fontFamily: 'UNArundathee',
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 6),
-
-                Text(
-                  'පැය:',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    fontFamily: 'UNIndeewaree',
-                  ),
-                ),
-                SizedBox(width: 2),
-                Container(
-                  height: 44,
-                  width: 44,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    color: Color(0xffFFE3AE),
-                  ),
-
-                  child: Center(
-                    child: Text(
-                      '02',
-                      style: TextStyle(
-                        fontFamily: 'UNArundathee',
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 6),
-
-                Text(
-                  'මිනි:',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    fontFamily: 'UNIndeewaree',
-                  ),
-                ),
-                SizedBox(width: 2),
-                Container(
-                  height: 44,
-                  width: 44,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    color: Color(0xffFFE3AE),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '34',
-                      style: TextStyle(
-                        fontFamily: 'UNArundathee',
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 6),
-
-                Text(
-                  'තත්:',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    fontFamily: 'UNIndeewaree',
-                  ),
-                ),
-                SizedBox(width: 2),
-                Container(
-                  height: 44,
-                  width: 44,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    color: Color(0xffFFE3AE),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '12',
-                      style: TextStyle(
-                        fontFamily: 'UNArundathee',
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 6),
-              ],
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 20, right: 20),
-              child: Text(
-                'අප්‍රේල් මස 14 වෙනි සදුදා පූර්වභාග 04.04ට තඹවර්ණ වස්ත්‍රාභරණයෙන් සැරසී දකුණු දිශාව බලා ළිප් බැඳ, ගිනි මොළවා කිරිබතක් ද, කැවිලි වර්ගයක් ද, දී කිරි සහ විලඳ ද පිළියෙල කරගැනීම මැනවි.',
-                style: TextStyle(fontSize: 20, fontFamily: 'UNGurulugomi'),
-                textAlign: TextAlign.justify,
-              ),
-            ),
-          ],
+      child: Center(
+        child: Text(
+          value,
+          style: const TextStyle(fontFamily: 'UNArundathee', fontSize: 25),
         ),
       ),
     );

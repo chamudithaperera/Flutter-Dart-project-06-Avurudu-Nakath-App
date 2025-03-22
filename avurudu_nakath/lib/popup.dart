@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'data/data.dart';
 
-class PopupDialog extends StatelessWidget {
+class PopupDialog extends StatefulWidget {
   final DataModel data;
   final String countdownDays;
   final String countdownHours;
@@ -16,6 +17,112 @@ class PopupDialog extends StatelessWidget {
     required this.countdownMinutes,
     required this.countdownSeconds,
   }) : super(key: key);
+
+  @override
+  State<PopupDialog> createState() => _PopupDialogState();
+}
+
+class _PopupDialogState extends State<PopupDialog> {
+  late String days;
+  late String hours;
+  late String minutes;
+  late String seconds;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize with provided values
+    days = widget.countdownDays;
+    hours = widget.countdownHours;
+    minutes = widget.countdownMinutes;
+    seconds = widget.countdownSeconds;
+
+    // Start real-time countdown within the popup
+    _startRealTimeCountdown();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  /// Starts a real-time countdown that updates every second
+  void _startRealTimeCountdown() {
+    // Parse the target date from the data model
+    final targetDateTime = _parseDateTime(widget.data.date, widget.data.time);
+
+    // Update immediately
+    _updateCountdown(targetDateTime);
+
+    // Update every second
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _updateCountdown(targetDateTime);
+    });
+  }
+
+  /// Parses date and time strings into DateTime object
+  DateTime _parseDateTime(String dateStr, String timeStr) {
+    // Parse date (format: YYYY-MM-DD)
+    final dateParts = dateStr.split('-');
+    final year = int.parse(dateParts[0]);
+    final month = int.parse(dateParts[1]);
+    final day = int.parse(dateParts[2]);
+
+    // Parse time (format: HH:MM AM/PM)
+    final isPM = timeStr.toLowerCase().contains('pm');
+    final timeParts = timeStr
+        .replaceAll(RegExp(r'[AP]M'), '')
+        .trim()
+        .split(':');
+    var hour = int.parse(timeParts[0]);
+    final minute = int.parse(timeParts[1]);
+
+    // Convert to 24-hour format if needed
+    if (isPM && hour < 12) {
+      hour += 12;
+    } else if (!isPM && hour == 12) {
+      hour = 0;
+    }
+
+    return DateTime(year, month, day, hour, minute);
+  }
+
+  /// Updates the countdown values based on remaining time
+  void _updateCountdown(DateTime targetDateTime) {
+    final now = DateTime.now();
+
+    // Calculate the difference
+    final difference = targetDateTime.difference(now);
+
+    // If the target date is in the past, stop countdown
+    if (difference.isNegative) {
+      _timer?.cancel();
+      setState(() {
+        days = "00";
+        hours = "00";
+        minutes = "00";
+        seconds = "00";
+      });
+      return;
+    }
+
+    // Calculate time components
+    final daysRemaining = difference.inDays;
+    final hoursRemaining = difference.inHours % 24;
+    final minutesRemaining = difference.inMinutes % 60;
+    final secondsRemaining = difference.inSeconds % 60;
+
+    // Format and update the state
+    setState(() {
+      days = daysRemaining.toString().padLeft(2, '0');
+      hours = hoursRemaining.toString().padLeft(2, '0');
+      minutes = minutesRemaining.toString().padLeft(2, '0');
+      seconds = secondsRemaining.toString().padLeft(2, '0');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,12 +244,27 @@ class PopupDialog extends StatelessWidget {
                   bottom: 8.0,
                 ),
                 child: Text(
-                  data.name,
+                  widget.data.name,
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                     fontFamily: 'UNIndeewaree',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              // Date and time
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text(
+                  "${widget.data.date} ${widget.data.time}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                    fontFamily: 'UNArundathee',
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -172,10 +294,10 @@ class PopupDialog extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildCountdownItem("දින:", countdownDays),
-                    _buildCountdownItem("පැය:", countdownHours),
-                    _buildCountdownItem("මිනි:", countdownMinutes),
-                    _buildCountdownItem("තත්:", countdownSeconds),
+                    _buildCountdownItem("දින:", days),
+                    _buildCountdownItem("පැය:", hours),
+                    _buildCountdownItem("මිනි:", minutes),
+                    _buildCountdownItem("තත්:", seconds),
                   ],
                 ),
               ),
@@ -189,7 +311,7 @@ class PopupDialog extends StatelessWidget {
                   bottom: 32.0,
                 ),
                 child: Text(
-                  data.description,
+                  widget.data.description,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-import 'data/data.dart'; // Ensure this file contains `dataList`
+import 'data/data.dart';
 import 'homePageContainer01.dart';
 import 'homePageContainer02.dart';
 import 'popup.dart';
@@ -23,16 +24,34 @@ class _HomePageState extends State<HomePage> {
   final double _scrollThreshold = 50.0;
   final double _maxTransitionOffset = 150.0;
 
+  // Timer for countdown
+  Timer? _countdownTimer;
+
+  // Current countdown values
+  String days = "00";
+  String hours = "00";
+  String minutes = "00";
+  String seconds = "00";
+
+  // ID of the next event (ආහාර පිසීම has ID 5 in the dataList)
+  final int nextEventId = 5;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+
+    // Start the countdown timer
+    _startCountdown();
   }
 
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+
+    // Cancel the timer when widget is disposed
+    _countdownTimer?.cancel();
     super.dispose();
   }
 
@@ -52,6 +71,82 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Starts the countdown timer that updates every second
+  void _startCountdown() {
+    // Get the target date from dataList for the next event
+    final targetEvent = dataList.firstWhere((item) => item.id == nextEventId);
+    final targetDateTime = _parseDateTime(targetEvent.date, targetEvent.time);
+
+    // Update countdown immediately
+    _updateCountdown(targetDateTime);
+
+    // Set up timer to update countdown every second
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _updateCountdown(targetDateTime);
+    });
+  }
+
+  /// Parses date and time strings into DateTime object
+  DateTime _parseDateTime(String dateStr, String timeStr) {
+    // Parse date (format: YYYY-MM-DD)
+    final dateParts = dateStr.split('-');
+    final year = int.parse(dateParts[0]);
+    final month = int.parse(dateParts[1]);
+    final day = int.parse(dateParts[2]);
+
+    // Parse time (format: HH:MM AM/PM)
+    final isPM = timeStr.toLowerCase().contains('pm');
+    final timeParts = timeStr
+        .replaceAll(RegExp(r'[AP]M'), '')
+        .trim()
+        .split(':');
+    var hour = int.parse(timeParts[0]);
+    final minute = int.parse(timeParts[1]);
+
+    // Convert to 24-hour format if needed
+    if (isPM && hour < 12) {
+      hour += 12;
+    } else if (!isPM && hour == 12) {
+      hour = 0;
+    }
+
+    return DateTime(year, month, day, hour, minute);
+  }
+
+  /// Updates the countdown values based on remaining time
+  void _updateCountdown(DateTime targetDateTime) {
+    final now = DateTime.now();
+
+    // Calculate the difference
+    final difference = targetDateTime.difference(now);
+
+    // If the target date is in the past, stop countdown
+    if (difference.isNegative) {
+      _countdownTimer?.cancel();
+      setState(() {
+        days = "00";
+        hours = "00";
+        minutes = "00";
+        seconds = "00";
+      });
+      return;
+    }
+
+    // Calculate time components
+    final daysRemaining = difference.inDays;
+    final hoursRemaining = difference.inHours % 24;
+    final minutesRemaining = difference.inMinutes % 60;
+    final secondsRemaining = difference.inSeconds % 60;
+
+    // Format and update the state
+    setState(() {
+      days = daysRemaining.toString().padLeft(2, '0');
+      hours = hoursRemaining.toString().padLeft(2, '0');
+      minutes = minutesRemaining.toString().padLeft(2, '0');
+      seconds = secondsRemaining.toString().padLeft(2, '0');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,9 +163,16 @@ class _HomePageState extends State<HomePage> {
                   opacity: 1.0 - _scrollProgress,
                   child: Transform.translate(
                     offset: Offset(0, -50 * _scrollProgress),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: HomePageContainer01(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: HomePageContainer01(
+                        days: days,
+                        hours: hours,
+                        minutes: minutes,
+                        seconds: seconds,
+                        eventId: nextEventId,
+                        onTap: () => _showPopup(context, nextEventId),
+                      ),
                     ),
                   ),
                 ),
@@ -183,7 +285,14 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Transform.translate(
                   offset: Offset(0, (1.0 - _scrollProgress) * 30),
-                  child: const HomePageContainer02(),
+                  child: HomePageContainer02(
+                    days: days,
+                    hours: hours,
+                    minutes: minutes,
+                    seconds: seconds,
+                    eventId: nextEventId,
+                    onTap: () => _showPopup(context, nextEventId),
+                  ),
                 ),
               ),
             ),
@@ -192,25 +301,40 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
 
-void _showPopup(BuildContext context, int id) {
-  final data = dataList.firstWhere((item) => item.id == id);
-  String days = "00";
-  String hours = "02";
-  String minutes = "34";
-  String seconds = "12";
+  /// Shows a popup dialog with countdown information for the specified event
+  void _showPopup(BuildContext context, int id) {
+    final data = dataList.firstWhere((item) => item.id == id);
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return PopupDialog(
-        data: data,
-        countdownDays: days,
-        countdownHours: hours,
-        countdownMinutes: minutes,
-        countdownSeconds: seconds,
-      );
-    },
-  );
+    // For the selected event, calculate its own countdown
+    final targetDateTime = _parseDateTime(data.date, data.time);
+    final now = DateTime.now();
+    final difference = targetDateTime.difference(now);
+
+    String eventDays = "00";
+    String eventHours = "00";
+    String eventMinutes = "00";
+    String eventSeconds = "00";
+
+    // Only calculate if the event is in the future
+    if (!difference.isNegative) {
+      eventDays = difference.inDays.toString().padLeft(2, '0');
+      eventHours = (difference.inHours % 24).toString().padLeft(2, '0');
+      eventMinutes = (difference.inMinutes % 60).toString().padLeft(2, '0');
+      eventSeconds = (difference.inSeconds % 60).toString().padLeft(2, '0');
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PopupDialog(
+          data: data,
+          countdownDays: eventDays,
+          countdownHours: eventHours,
+          countdownMinutes: eventMinutes,
+          countdownSeconds: eventSeconds,
+        );
+      },
+    );
+  }
 }

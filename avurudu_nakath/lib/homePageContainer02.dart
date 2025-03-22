@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'data/data.dart';
+import 'homePageContainer01.dart'; // Import to reuse the getNextEvent function
 
 class HomePageContainer02 extends StatelessWidget {
   final String days;
   final String hours;
   final String minutes;
   final String seconds;
-  final int eventId;
   final VoidCallback onTap;
 
   const HomePageContainer02({
@@ -15,14 +15,14 @@ class HomePageContainer02 extends StatelessWidget {
     required this.hours,
     required this.minutes,
     required this.seconds,
-    required this.eventId,
     required this.onTap,
+    required int eventId,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Find the event data from the dataList
-    final eventData = dataList.firstWhere((item) => item.id == eventId);
+    // Get the next upcoming event using the shared function
+    final eventData = getNextEvent();
 
     return GestureDetector(
       onTap: onTap,

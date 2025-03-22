@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   // Timer for countdown
   Timer? _countdownTimer;
+  Timer? _eventCheckTimer;
 
   // Current countdown values
   String days = "00";
@@ -33,16 +34,26 @@ class _HomePageState extends State<HomePage> {
   String minutes = "00";
   String seconds = "00";
 
-  // ID of the next event (ආහාර පිසීම has ID 5 in the dataList)
-  final int nextEventId = 5;
+  // ID of the next event (will be determined dynamically)
+  late int nextEventId;
+  late DataModel nextEvent;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
 
+    // Find the next event
+    _updateNextEvent();
+
     // Start the countdown timer
     _startCountdown();
+
+    // Set up a timer to periodically check if the next event has changed
+    // This handles when one event passes and we need to move to the next
+    _eventCheckTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      _updateNextEvent();
+    });
   }
 
   @override
@@ -50,8 +61,9 @@ class _HomePageState extends State<HomePage> {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
 
-    // Cancel the timer when widget is disposed
+    // Cancel the timers when widget is disposed
     _countdownTimer?.cancel();
+    _eventCheckTimer?.cancel();
     super.dispose();
   }
 
@@ -71,11 +83,49 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Finds and updates the next upcoming event
+  void _updateNextEvent() {
+    final now = DateTime.now();
+    DataModel? upcomingEvent;
+    Duration? shortestDuration;
+
+    for (var event in dataList) {
+      final eventDateTime = _parseDateTime(event.date, event.time);
+      if (eventDateTime.isBefore(now)) continue;
+
+      final duration = eventDateTime.difference(now);
+      if (shortestDuration == null || duration < shortestDuration) {
+        shortestDuration = duration;
+        upcomingEvent = event;
+      }
+    }
+
+    // Ensure nextEventId and nextEvent are properly initialized
+    if (upcomingEvent != null) {
+      setState(() {
+        nextEvent = upcomingEvent!;
+        nextEventId = upcomingEvent.id;
+      });
+    } else if (dataList.isNotEmpty) {
+      setState(() {
+        nextEvent = dataList[0]; // Fallback to first event
+        nextEventId = dataList[0].id;
+      });
+    }
+
+    _restartCountdown();
+  }
+
+  /// Restarts the countdown timer
+  void _restartCountdown() {
+    _countdownTimer?.cancel();
+    _startCountdown();
+  }
+
   /// Starts the countdown timer that updates every second
   void _startCountdown() {
-    // Get the target date from dataList for the next event
-    final targetEvent = dataList.firstWhere((item) => item.id == nextEventId);
-    final targetDateTime = _parseDateTime(targetEvent.date, targetEvent.time);
+    // Get the target date for the next event
+    final targetDateTime = _parseDateTime(nextEvent.date, nextEvent.time);
 
     // Update countdown immediately
     _updateCountdown(targetDateTime);
@@ -94,20 +144,32 @@ class _HomePageState extends State<HomePage> {
     final month = int.parse(dateParts[1]);
     final day = int.parse(dateParts[2]);
 
-    // Parse time (format: HH:MM AM/PM)
-    final isPM = timeStr.toLowerCase().contains('pm');
-    final timeParts = timeStr
-        .replaceAll(RegExp(r'[AP]M'), '')
-        .trim()
-        .split(':');
-    var hour = int.parse(timeParts[0]);
-    final minute = int.parse(timeParts[1]);
+    // Parse time (format: HH:MM AM/PM or 24-hour format)
+    int hour = 0;
+    int minute = 0;
 
-    // Convert to 24-hour format if needed
-    if (isPM && hour < 12) {
-      hour += 12;
-    } else if (!isPM && hour == 12) {
-      hour = 0;
+    if (timeStr.toLowerCase().contains('am') ||
+        timeStr.toLowerCase().contains('pm')) {
+      // 12-hour format with AM/PM
+      final isPM = timeStr.toLowerCase().contains('pm');
+      final timeParts = timeStr
+          .replaceAll(RegExp(r'[AP]M'), '')
+          .trim()
+          .split(':');
+      hour = int.parse(timeParts[0]);
+      minute = int.parse(timeParts[1]);
+
+      // Convert to 24-hour format if needed
+      if (isPM && hour < 12) {
+        hour += 12;
+      } else if (!isPM && hour == 12) {
+        hour = 0;
+      }
+    } else {
+      // 24-hour format
+      final timeParts = timeStr.split(':');
+      hour = int.parse(timeParts[0]);
+      minute = int.parse(timeParts[1]);
     }
 
     return DateTime(year, month, day, hour, minute);
@@ -120,15 +182,9 @@ class _HomePageState extends State<HomePage> {
     // Calculate the difference
     final difference = targetDateTime.difference(now);
 
-    // If the target date is in the past, stop countdown
+    // If the target date is in the past, stop countdown and check for next event
     if (difference.isNegative) {
-      _countdownTimer?.cancel();
-      setState(() {
-        days = "00";
-        hours = "00";
-        minutes = "00";
-        seconds = "00";
-      });
+      _updateNextEvent();
       return;
     }
 

@@ -1,8 +1,12 @@
 import 'package:avurudu_nakath/GetStartPage.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'notification_service.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initNotifications();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

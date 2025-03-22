@@ -5,6 +5,7 @@ import 'data/data.dart';
 import 'homePageContainer01.dart';
 import 'homePageContainer02.dart';
 import 'popup.dart';
+import 'notification_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -100,20 +101,37 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    // Ensure nextEventId and nextEvent are properly initialized
     if (upcomingEvent != null) {
       setState(() {
         nextEvent = upcomingEvent!;
         nextEventId = upcomingEvent.id;
       });
-    } else if (dataList.isNotEmpty) {
-      setState(() {
-        nextEvent = dataList[0]; // Fallback to first event
-        nextEventId = dataList[0].id;
-      });
-    }
 
-    _restartCountdown();
+      _scheduleEventNotifications(upcomingEvent!);
+    }
+  }
+
+  void _scheduleEventNotifications(DataModel event) {
+    final eventTime = _parseDateTime(event.date, event.time);
+
+    // Schedule notification for the event time
+    NotificationService.scheduleNotification(
+      event.id,
+      "අවුරුදු නැකත් - ${event.name}",
+      event.description,
+      eventTime,
+    );
+
+    // Schedule notification 5 minutes before
+    final fiveMinutesBefore = eventTime.subtract(const Duration(minutes: 5));
+    if (fiveMinutesBefore.isAfter(DateTime.now())) {
+      NotificationService.scheduleNotification(
+        event.id + 100, // Unique ID for this notification
+        "ඉදිරිපත් වන අවුරුදු නැකත්!",
+        "මිනිත්තු 5න් ${event.name} නැකත් සිදු වේ.",
+        fiveMinutesBefore,
+      );
+    }
   }
 
   /// Restarts the countdown timer

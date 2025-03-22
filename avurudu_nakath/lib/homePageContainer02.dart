@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'data/data.dart';
 import 'homePageContainer01.dart'; // Import to reuse the getNextEvent function
 
 class HomePageContainer02 extends StatelessWidget {
@@ -26,85 +25,89 @@ class HomePageContainer02 extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        height: 130,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, left: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'මීළඟ නැකත: ${eventData.name}',
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: 'UNIndeewaree',
+      child: IntrinsicHeight(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, left: 20, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize:
+                  MainAxisSize
+                      .min, // Makes the column take only necessary space
+              children: [
+                Text(
+                  'මීළඟ නැකත: ${eventData.name}',
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                    fontFamily: 'UNIndeewaree',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              Row(
-                children: [
-                  const Text(
-                    'දින:',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                      fontFamily: 'UNIndeewaree',
+                Row(
+                  children: [
+                    const Text(
+                      'දින:',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: 'UNIndeewaree',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 2),
-                  _buildCountdownBox(days),
-                  const SizedBox(width: 6),
+                    const SizedBox(width: 2),
+                    _buildCountdownBox(days),
+                    const SizedBox(width: 6),
 
-                  const Text(
-                    'පැය:',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                      fontFamily: 'UNIndeewaree',
+                    const Text(
+                      'පැය:',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: 'UNIndeewaree',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 2),
-                  _buildCountdownBox(hours),
-                  const SizedBox(width: 6),
+                    const SizedBox(width: 2),
+                    _buildCountdownBox(hours),
+                    const SizedBox(width: 6),
 
-                  const Text(
-                    'මිනි:',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                      fontFamily: 'UNIndeewaree',
+                    const Text(
+                      'මිනි:',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: 'UNIndeewaree',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 2),
-                  _buildCountdownBox(minutes),
-                  const SizedBox(width: 6),
+                    const SizedBox(width: 2),
+                    _buildCountdownBox(minutes),
+                    const SizedBox(width: 6),
 
-                  const Text(
-                    'තත්:',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                      fontFamily: 'UNIndeewaree',
+                    const Text(
+                      'තත්:',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: 'UNIndeewaree',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 2),
-                  _buildCountdownBox(seconds),
-                  const SizedBox(width: 6),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 2),
+                    _buildCountdownBox(seconds),
+                    const SizedBox(width: 6),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

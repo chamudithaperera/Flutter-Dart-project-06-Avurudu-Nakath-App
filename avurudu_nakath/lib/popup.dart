@@ -10,13 +10,13 @@ class PopupDialog extends StatefulWidget {
   final String countdownSeconds;
 
   const PopupDialog({
-    Key? key,
+    super.key,
     required this.data,
     required this.countdownDays,
     required this.countdownHours,
     required this.countdownMinutes,
     required this.countdownSeconds,
-  }) : super(key: key);
+  });
 
   @override
   State<PopupDialog> createState() => _PopupDialogState();

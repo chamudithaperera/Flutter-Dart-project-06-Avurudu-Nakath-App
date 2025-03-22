@@ -5,6 +5,7 @@ import 'data/data.dart';
 import 'homePageContainer01.dart';
 import 'homePageContainer02.dart';
 import 'popup.dart';
+import 'notification_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,6 +55,14 @@ class _HomePageState extends State<HomePage> {
     _eventCheckTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       _updateNextEvent();
     });
+
+    // Schedule notifications for all events
+    _scheduleNotifications();
+  }
+
+  // Schedule notifications for all events
+  Future<void> _scheduleNotifications() async {
+    await NotificationService.scheduleAllNotifications();
   }
 
   @override

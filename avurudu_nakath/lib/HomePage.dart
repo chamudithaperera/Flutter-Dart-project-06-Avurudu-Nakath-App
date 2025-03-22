@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'data/data.dart'; // Ensure this file contains `dataList`
 import 'homePageContainer01.dart';
 import 'homePageContainer02.dart';
+import 'popup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -106,37 +107,40 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: List.generate(
                         dataList.length,
-                        (index) => Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color(0xffFFF1D6),
-                          ),
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dataList[index].name,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                  fontFamily: 'UNIndeewaree',
+                        (index) => GestureDetector(
+                          onTap: () => _showPopup(context, dataList[index].id),
+                          child: Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xffFFF1D6),
+                            ),
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  dataList[index].name,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                    fontFamily: 'UNIndeewaree',
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                dataList[index].description,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                  fontFamily: 'UNGanganee',
+                                const SizedBox(height: 8),
+                                Text(
+                                  dataList[index].description,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                    fontFamily: 'UNGanganee',
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -188,4 +192,25 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+void _showPopup(BuildContext context, int id) {
+  final data = dataList.firstWhere((item) => item.id == id);
+  String days = "00";
+  String hours = "02";
+  String minutes = "34";
+  String seconds = "12";
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return PopupDialog(
+        data: data,
+        countdownDays: days,
+        countdownHours: hours,
+        countdownMinutes: minutes,
+        countdownSeconds: seconds,
+      );
+    },
+  );
 }

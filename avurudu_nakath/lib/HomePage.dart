@@ -22,8 +22,8 @@ class _HomePageState extends State<HomePage> {
   final double _titleHeight = 160.0;
   final double _container02Height = 130.0;
   final double _topPadding = 50.0;
-  final double _scrollThreshold = 50.0;
-  final double _maxTransitionOffset = 150.0;
+  final double _scrollThreshold = 0;
+  final double _maxTransitionOffset = 200.0;
 
   // Timer for countdown
   Timer? _countdownTimer;
@@ -366,7 +366,7 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                   'සුභ අළුත් අවුරුද්දක් වේවා',
                   style: TextStyle(
-                    fontSize: 50,
+                    fontSize: 60,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                     fontFamily: 'UNDisapamok',

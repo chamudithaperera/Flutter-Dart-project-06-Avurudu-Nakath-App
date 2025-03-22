@@ -26,6 +26,7 @@ flutter:
     - assets/sun.png
     - assets/sunFace.png
     - assets/lineArt.png
+    - assets/cooking.png
 
   fonts:
     - family: UNDisapamok

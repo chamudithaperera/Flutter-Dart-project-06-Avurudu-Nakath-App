@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   final double _titleHeight = 160.0;
   final double _container02Height = 130.0;
-  final double _topPadding = 50.0;
+  final double _topPadding = 60.0;
   final double _scrollThreshold = 0;
   final double _maxTransitionOffset = 200.0;
 
@@ -362,7 +362,7 @@ class _HomePageState extends State<HomePage> {
             child: Opacity(
               opacity: 1.0 - _scrollProgress,
               child: const Padding(
-                padding: EdgeInsets.fromLTRB(10, 70, 10, 20),
+                padding: EdgeInsets.fromLTRB(10, 70, 10, 0),
                 child: Text(
                   'සුභ අළුත් අවුරුද්දක් වේවා',
                   style: TextStyle(

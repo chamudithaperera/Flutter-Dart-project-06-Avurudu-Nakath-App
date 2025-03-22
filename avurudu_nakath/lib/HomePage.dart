@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(

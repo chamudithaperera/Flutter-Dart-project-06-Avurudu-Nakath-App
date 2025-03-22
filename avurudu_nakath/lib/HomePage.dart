@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'data/data.dart';
 import 'homePageContainer01.dart';
 import 'homePageContainer02.dart';
 
@@ -101,17 +102,58 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              Image.asset('assets/lineArt.png'),
 
               // Your remaining content - just the one container
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Container(
-                    height: 1000,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: const Color(0xffffffff),
+                    ),
+                    child: Column(
+                      children: List.generate(
+                        dataList.length,
+                        (index) => Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xffFFF1D6),
+                          ),
+                          // Remove fixed height and add padding for better spacing
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dataList[index].name,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                  fontFamily: 'UNIndeewaree',
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ), // Add spacing between texts
+                              Text(
+                                dataList[index].description,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                  fontFamily: 'UNGanganee',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

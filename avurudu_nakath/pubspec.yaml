@@ -25,6 +25,7 @@ flutter:
   assets:
     - assets/sun.png
     - assets/sunFace.png
+    - assets/lineArt.png
 
   fonts:
     - family: UNDisapamok
@@ -39,3 +40,6 @@ flutter:
     - family: UNGurulugomi
       fonts:
         - asset: assets/fonts/UN-Gurulugomi.ttf
+    - family: UNGanganee
+      fonts:
+        - asset: assets/fonts/UN-Ganganee.ttf

@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage>
 
   // Animation controller for the sun - initialize directly instead of using late
   AnimationController? _sunController;
-  Animation<double>? _sunRotation;
 
   // Timer for countdown
   Timer? _countdownTimer;
@@ -57,13 +56,6 @@ class _HomePageState extends State<HomePage>
     );
 
     // Create sun rotation animation
-    _sunRotation = Tween<double>(
-      begin: 0,
-      end: 2 * math.pi,
-    ).animate(_sunController!);
-
-    // Start the sun animation
-    _sunController!.repeat();
 
     // Find the next event
     _updateNextEvent();
@@ -230,11 +222,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    // Check if controller is initialized
-    if (_sunController == null || !_sunController!.isAnimating) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
       body: Stack(
         children: [
@@ -251,62 +238,58 @@ class _HomePageState extends State<HomePage>
             ),
           ),
 
-          // Animated sun in the background
+          // Background image 3 positioned at bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Opacity(
+              opacity: 1,
+              child: Image.asset(
+                'assets/bg3.png',
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+          ),
+
+          // Animated sun in the background - replacing with static sun
           Positioned(
             top: -30,
             right: -30,
-            child: AnimatedBuilder(
-              animation: _sunController!,
-              builder: (context, child) {
-                // Calculate oscillating scale value for "breathing" effect
-                double breatheScale =
-                    1.0 + 0.05 * math.sin(_sunController!.value * math.pi * 2);
-
-                return Opacity(
-                  opacity: 0.6,
-                  child: Transform.rotate(
-                    angle: _sunRotation!.value,
-                    child: Transform.scale(
-                      scale: breatheScale,
-                      child: SizedBox(
-                        width: 150,
-                        height: 150,
-                        child: Image.asset('assets/sun.png', fit: BoxFit.cover),
-                      ),
-                    ),
-                  ),
-                );
-              },
+            child: Opacity(
+              opacity: 0.6,
+              child: SizedBox(
+                width: 150,
+                height: 150,
+                child: Image.asset('assets/sun.png', fit: BoxFit.cover),
+              ),
             ),
           ),
 
           // Decorative elements for Avurudu with subtle animation
           Positioned(
-            bottom: 20 + (10 * math.sin(_sunController!.value * math.pi)),
+            bottom: 20,
             right: 20,
             child: Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(
-                  0.1 + 0.05 * math.sin(_sunController!.value * math.pi * 2),
-                ),
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
           ),
 
           Positioned(
-            bottom: 50 + (8 * math.cos(_sunController!.value * math.pi)),
+            bottom: 50,
             left: 30,
             child: Container(
               width: 60,
               height: 60,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(
-                  0.1 + 0.05 * math.cos(_sunController!.value * math.pi * 2),
-                ),
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
           ),
@@ -351,24 +334,28 @@ class _HomePageState extends State<HomePage>
                 ),
 
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 28,
-                      horizontal: 24,
-                    ), // Adjust padding for better spacing
-                    child: Image.asset(
-                      'assets/lineArt.png',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Text(
-                            'Image Not Found',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        );
-                      },
-                    ),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 28,
+                          horizontal: 24,
+                        ), // Adjust padding for better spacing
+                        child: Image.asset(
+                          'assets/lineArt.png',
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Text(
+                                'Image Not Found',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -454,6 +441,7 @@ class _HomePageState extends State<HomePage>
             ),
           ),
 
+          // Title text
           Positioned(
             top: 0,
             left: 0,
@@ -472,6 +460,35 @@ class _HomePageState extends State<HomePage>
                   ),
                   textAlign: TextAlign.center,
                 ),
+              ),
+            ),
+          ),
+
+          // Background image 1 positioned at left corner after the title text
+          Positioned(
+            top: -20,
+            left: -150,
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                'assets/bg1.png',
+                width: MediaQuery.of(context).size.width * 1.2,
+                alignment: Alignment.topLeft,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: 440,
+            right: -80,
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                'assets/bg2.png',
+                width: MediaQuery.of(context).size.width * 0.8,
+                alignment: Alignment.topRight,
+                fit: BoxFit.contain,
               ),
             ),
           ),

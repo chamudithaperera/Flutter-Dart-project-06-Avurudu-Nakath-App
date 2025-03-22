@@ -32,6 +32,9 @@ flutter:
     - assets/cooking.png
     - assets/nakath2.png
     - assets/nakath3.png
+    - assets/bg1.png
+    - assets/bg2.png
+    - assets/bg3.png
 
   fonts:
     - family: UNDisapamok

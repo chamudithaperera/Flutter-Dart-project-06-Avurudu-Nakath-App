@@ -95,6 +95,51 @@ class _GetStartPageState extends State<GetStartPage>
                 ),
               ),
 
+              // Background image 1 positioned at top right
+              Positioned(
+                top: -40,
+                left: -120,
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Image.asset(
+                    'assets/bg1.png',
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    alignment: Alignment.topRight,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+
+              // Background image 2 positioned at bottom left
+              Positioned(
+                bottom: 150,
+                right: -80,
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Image.asset(
+                    'assets/bg2.png',
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+
+              // Background image 3 positioned at bottom
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Opacity(
+                  opacity: 1,
+                  child: Image.asset(
+                    'assets/bg3.png',
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
+
               // Animated decorative elements
               Positioned(
                 bottom: 20,

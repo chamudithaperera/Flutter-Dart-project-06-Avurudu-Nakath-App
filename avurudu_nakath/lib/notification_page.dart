@@ -19,6 +19,8 @@ class NotificationPage extends StatelessWidget {
     },
   ];
 
+  NotificationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

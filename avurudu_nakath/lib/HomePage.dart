@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'data/data.dart';
 import 'homePageContainer01.dart';
@@ -15,8 +14,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
   double _scrollProgress = 0.0;
@@ -26,9 +24,6 @@ class _HomePageState extends State<HomePage>
   final double _topPadding = 60.0;
   final double _scrollThreshold = 0;
   final double _maxTransitionOffset = 200.0;
-
-  // Animation controller for the sun - initialize directly instead of using late
-  AnimationController? _sunController;
 
   // Timer for countdown
   Timer? _countdownTimer;
@@ -49,14 +44,6 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _scrollController.addListener(_scrollListener);
 
-    // Initialize sun animation controller
-    _sunController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    );
-
-    // Create sun rotation animation
-
     // Find the next event
     _updateNextEvent();
 
@@ -64,7 +51,6 @@ class _HomePageState extends State<HomePage>
     _startCountdown();
 
     // Set up a timer to periodically check if the next event has changed
-    // This handles when one event passes and we need to move to the next
     _eventCheckTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       _updateNextEvent();
     });
@@ -73,30 +59,21 @@ class _HomePageState extends State<HomePage>
     _scheduleNotifications();
   }
 
-  // Schedule notifications for all events
-  Future<void> _scheduleNotifications() async {
-    await NotificationService.scheduleAllNotifications();
-  }
-
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
-    _sunController?.dispose();
-
-    // Cancel the timers when widget is disposed
     _countdownTimer?.cancel();
     _eventCheckTimer?.cancel();
     super.dispose();
   }
 
   void _scrollListener() {
-    double rawProgress =
-        (_scrollController.offset - _scrollThreshold) /
-        (_maxTransitionOffset - _scrollThreshold);
-    double progress = rawProgress.clamp(0.0, 1.0);
-
-    bool isNowScrolled = _scrollController.offset > _scrollThreshold;
+    final double offset = _scrollController.offset;
+    final double rawProgress =
+        (offset - _scrollThreshold) / (_maxTransitionOffset - _scrollThreshold);
+    final double progress = rawProgress.clamp(0.0, 1.0);
+    final bool isNowScrolled = offset > _scrollThreshold;
 
     if (isNowScrolled != _isScrolled || progress != _scrollProgress) {
       setState(() {
@@ -225,10 +202,8 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       body: Stack(
         children: [
-          // Decorative background gradient (similar to GetStarted page)
+          // Background gradient
           Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.topCenter,
@@ -238,285 +213,247 @@ class _HomePageState extends State<HomePage>
             ),
           ),
 
-          // Background image 3 positioned at bottom
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Opacity(
-              opacity: 1,
-              child: Image.asset(
-                'assets/bg3.png',
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
+          // Static background images
+          _buildBackgroundImages(),
 
-          // Animated sun in the background - replacing with static sun
-          Positioned(
-            top: -30,
-            right: -30,
-            child: Opacity(
-              opacity: 0.6,
-              child: SizedBox(
-                width: 150,
-                height: 150,
-                child: Image.asset('assets/sun.png', fit: BoxFit.cover),
-              ),
-            ),
-          ),
-
-          // Decorative elements for Avurudu with subtle animation
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1),
-              ),
-            ),
-          ),
-
-          Positioned(
-            bottom: 50,
-            left: 30,
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1),
-              ),
-            ),
-          ),
-
-          // Add a safe area to prevent scrolling under the top container
+          // Main content
           SafeArea(
             child: CustomScrollView(
               controller: _scrollController,
-              // Use clamping physics to prevent overscroll
               physics: const ClampingScrollPhysics(),
               slivers: [
-                // Add padding at the top to ensure content starts below the top container
+                // Top padding
                 SliverPadding(
                   padding: EdgeInsets.only(
-                    // Adjust padding to create more space at the top
                     top:
                         _titleHeight +
                         (_container02Height * _scrollProgress) +
                         20,
                   ),
-                  sliver: SliverToBoxAdapter(child: Container()),
+                  sliver: const SliverToBoxAdapter(child: SizedBox()),
                 ),
 
-                SliverToBoxAdapter(
-                  child: Opacity(
-                    opacity: 1.0 - _scrollProgress,
-                    child: Transform.translate(
-                      offset: Offset(0, -50 * _scrollProgress),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: HomePageContainer01(
-                          days: days,
-                          hours: hours,
-                          minutes: minutes,
-                          seconds: seconds,
-                          eventId: nextEventId,
-                          onTap: () => _showPopup(context, nextEventId),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                // Main content containers
+                _buildMainContent(),
 
-                SliverToBoxAdapter(
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 28,
-                          horizontal: 24,
-                        ), // Adjust padding for better spacing
-                        child: Image.asset(
-                          'assets/lineArt.png',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Text(
-                                'Image Not Found',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      24,
-                      0,
-                      24,
-                      32,
-                    ), // Adjust padding for bottom content
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          16,
-                        ), // Increase border radius
-                        color: const Color(0xffffffff),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: List.generate(
-                          dataList.length,
-                          (index) => GestureDetector(
-                            onTap:
-                                () => _showPopup(context, dataList[index].id),
-                            child: Container(
-                              width: double.infinity,
-                              margin: const EdgeInsets.all(12), // Adjust margin
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  14,
-                                ), // Increase border radius
-                                color: const Color(0xffFFF1D6),
-                              ),
-                              padding: const EdgeInsets.all(
-                                16.0,
-                              ), // Increase padding
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    dataList[index].name,
-                                    style: const TextStyle(
-                                      fontSize:
-                                          22, // Slightly increase font size
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                      fontFamily: 'UNIndeewaree',
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ), // Increase spacing
-                                  Text(
-                                    dataList[index].description,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                      fontFamily: 'UNGanganee',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Add extra space at the bottom for better scrolling experience
+                // Bottom padding
                 const SliverToBoxAdapter(child: SizedBox(height: 40)),
               ],
             ),
           ),
 
-          // Title text
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Opacity(
-              opacity: 1.0 - _scrollProgress,
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(10, 70, 10, 0),
-                child: Text(
-                  'සුභ අළුත් අවුරුද්දක් වේවා',
-                  style: TextStyle(
-                    fontSize: 60,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    fontFamily: 'UNDisapamok',
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+          // Overlay elements (title and container02)
+          _buildOverlayElements(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackgroundImages() {
+    return Stack(
+      children: [
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Image.asset(
+            'assets/bg3.png',
+            width: double.infinity,
+            fit: BoxFit.fitWidth,
+          ),
+        ),
+        Positioned(
+          top: -30,
+          right: -30,
+          child: Opacity(
+            opacity: 0.6,
+            child: Image.asset(
+              'assets/sun.png',
+              width: 150,
+              height: 150,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Positioned(
+          top: -20,
+          left: -150,
+          child: Opacity(
+            opacity: 0.5,
+            child: Image.asset(
+              'assets/bg1.png',
+              width: MediaQuery.of(context).size.width * 1.2,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 440,
+          right: -80,
+          child: Opacity(
+            opacity: 0.5,
+            child: Image.asset(
+              'assets/bg2.png',
+              width: MediaQuery.of(context).size.width * 0.8,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMainContent() {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        // Container 01
+        Opacity(
+          opacity: 1.0 - _scrollProgress,
+          child: Transform.translate(
+            offset: Offset(0, -50 * _scrollProgress),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: HomePageContainer01(
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                eventId: nextEventId,
+                onTap: () => _showPopup(context, nextEventId),
               ),
             ),
           ),
+        ),
 
-          // Background image 1 positioned at left corner after the title text
-          Positioned(
-            top: -20,
-            left: -150,
-            child: Opacity(
-              opacity: 0.5,
-              child: Image.asset(
-                'assets/bg1.png',
-                width: MediaQuery.of(context).size.width * 1.2,
-                alignment: Alignment.topLeft,
-                fit: BoxFit.contain,
-              ),
-            ),
+        // Line Art
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+          child: Image.asset(
+            'assets/lineArt.png',
+            width: double.infinity,
+            fit: BoxFit.cover,
           ),
+        ),
 
-          Positioned(
-            top: 440,
-            right: -80,
-            child: Opacity(
-              opacity: 0.5,
-              child: Image.asset(
-                'assets/bg2.png',
-                width: MediaQuery.of(context).size.width * 0.8,
-                alignment: Alignment.topRight,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
+        // Event List
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+          child: _buildEventList(),
+        ),
+      ]),
+    );
+  }
 
-          Positioned(
-            top: _topPadding,
-            left: 0,
-            right: 0,
-            child: Opacity(
-              opacity: _scrollProgress,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Transform.translate(
-                  offset: Offset(0, (1.0 - _scrollProgress) * 30),
-                  child: HomePageContainer02(
-                    days: days,
-                    hours: hours,
-                    minutes: minutes,
-                    seconds: seconds,
-                    eventId: nextEventId,
-                    onTap: () => _showPopup(context, nextEventId),
-                  ),
-                ),
-              ),
-            ),
+  Widget _buildEventList() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: dataList.length,
+        itemBuilder: (context, index) => _buildEventItem(dataList[index]),
+      ),
+    );
+  }
+
+  Widget _buildEventItem(DataModel event) {
+    return GestureDetector(
+      onTap: () => _showPopup(context, event.id),
+      child: Container(
+        margin: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: const Color(0xffFFF1D6),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              event.name,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+                fontFamily: 'UNIndeewaree',
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              event.description,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+                fontFamily: 'UNGanganee',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOverlayElements() {
+    return Stack(
+      children: [
+        // Title
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Opacity(
+            opacity: 1.0 - _scrollProgress,
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(10, 70, 10, 0),
+              child: Text(
+                'සුභ අළුත් අවුරුද්දක් වේවා',
+                style: TextStyle(
+                  fontSize: 60,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  fontFamily: 'UNDisapamok',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+
+        // Container 02
+        Positioned(
+          top: _topPadding,
+          left: 0,
+          right: 0,
+          child: Opacity(
+            opacity: _scrollProgress,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Transform.translate(
+                offset: Offset(0, (1.0 - _scrollProgress) * 30),
+                child: HomePageContainer02(
+                  days: days,
+                  hours: hours,
+                  minutes: minutes,
+                  seconds: seconds,
+                  eventId: nextEventId,
+                  onTap: () => _showPopup(context, nextEventId),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -554,5 +491,10 @@ class _HomePageState extends State<HomePage>
         );
       },
     );
+  }
+
+  // Schedule notifications for all events
+  Future<void> _scheduleNotifications() async {
+    await NotificationService.scheduleAllNotifications();
   }
 }

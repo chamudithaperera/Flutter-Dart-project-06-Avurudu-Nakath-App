@@ -31,15 +31,11 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
@@ -47,9 +43,12 @@
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-    <string>fetch</string>
-    <string>remote-notification</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
-
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app needs calendar access to schedule notifications for Avurudu events.</string>
+	<key>NSNotificationsUsageDescription</key>
+	<string>This app needs notification permissions to remind you about upcoming Avurudu events.</string>
 </dict>
 </plist>

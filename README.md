@@ -2,7 +2,7 @@
 
 A Flutter application that helps users track and manage important dates and events related to the Sinhala and Tamil New Year (Avurudu) celebrations.
 
-[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.aurudu.app)
+Download from Google Play Store: [Avurudu Nakath 2025](https://play.google.com/store/apps/details?id=com.aurudu.app)
 
 ## About
 
@@ -24,13 +24,13 @@ Welcome to the ultimate guide for celebrating the Sinhala and Tamil New Year in 
 ## Screenshots
 
 ### Get Started Page
-![Get Started Page](avurudu_nakath/assets/screenshots/get_started_page.png)
+<img src="avurudu_nakath/assets/screenshots/get_started_page.png" width="300" alt="Get Started Page">
 
 ### Home Page
-![Home Page](avurudu_nakath/assets/screenshots/home_page.png)
+<img src="avurudu_nakath/assets/screenshots/home_page.png" width="300" alt="Home Page">
 
 ### Detailed Information Page
-![Detailed Page](avurudu_nakath/assets/screenshots/detailed_page.png)
+<img src="avurudu_nakath/assets/screenshots/detailed_page.png" width="300" alt="Detailed Page">
 
 ## Getting Started
 

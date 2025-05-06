@@ -86,12 +86,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Chamuditha Perera
 - GitHub: [@chamudithaperera](https://github.com/chamudithaperera)
-- Email: nipundilshan991@gmail.com
+- Email: chamudithaperera.dev@gmail.com
 
 ## Support
 
 For any support or queries, please contact:
-- Email: nipundilshan991@gmail.com
+- Email: chamudithaperera.dev@gmail.com
 
 ## Acknowledgments
 
